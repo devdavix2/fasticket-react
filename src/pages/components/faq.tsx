@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react"; // Import the ChevronDown icon
-import { Button } from "./components/ui/button";
 
 const faqs = [
   {
