@@ -10,8 +10,6 @@ export function Header() {
     { href: "/events", label: "Events" },
     { href: "/hotels", label: "Hotels" },
     { href: "/contact", label: "Contact" },
-    { href: "/blog", label: "Blog" },
-
   ]
 
   return (
