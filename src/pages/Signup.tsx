@@ -5,8 +5,6 @@ import { Label } from "../components/ui/label";
 import { Button } from "../components/ui/button";
 
 export function Signup() {
-  const [error, setError] = useState<string | null>(null);
-
   const handleSignUp = () => {
     // Placeholder for sign-up logic
     console.log("Sign-up functionality goes here.");
@@ -45,7 +43,6 @@ export function Signup() {
               </div>
               <Button className="w-full" type="submit">Sign Up</Button>
             </form>
-            {error && <p className="mt-2 text-red-500">{error}</p>}
           </CardContent>
         </Card>
       </div>
