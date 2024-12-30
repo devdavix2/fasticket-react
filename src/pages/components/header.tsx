@@ -1,23 +1,25 @@
-import { Link } from 'react-router-dom'
-import { Menu } from 'lucide-react'
-import { Button } from './components/ui/button'
-import { Sheet, SheetContent, SheetTrigger } from './components/ui/sheet'
+import { Link } from 'react-router-dom';
+import { Menu } from 'lucide-react';
+import { Button } from './components/ui/button';
+import { Sheet, SheetContent, SheetTrigger } from './components/ui/sheet';
 
 export function Header() {
   const menuItems = [
     { href: "/", label: "Home" },
+    { href: "/about", label: "About" },
     { href: "/events", label: "Events" },
     { href: "/hotels", label: "Hotels" },
     { href: "/contact", label: "Contact" },
-    
-  ]
+  ];
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container max-w-7xl mx-auto px-4 flex h-16 items-center">
         <div className="mr-4 flex">
           <Link to="/" className="mr-6 flex items-center space-x-2">
-            <span className="text-2xl font-bold">Fast<span className="text-primary">icket</span></span>
+            <span className="text-2xl font-bold">
+              Fast<span className="text-primary">icket</span>
+            </span>
           </Link>
         </div>
 
@@ -36,8 +38,14 @@ export function Header() {
 
         {/* Login and Sign Up Buttons */}
         <div className="hidden md:flex md:items-center md:space-x-4">
-          <Button variant="ghost">Login</Button>
-          <Button>Sign Up</Button>
+          <Link to="/login">
+            <Button variant="ghost" className="justify-start">
+              Login
+            </Button>
+          </Link>
+          <Link to="/signup">
+            <Button className="justify-start">Sign Up</Button>
+          </Link>
         </div>
 
         {/* Mobile Menu */}
@@ -62,7 +70,9 @@ export function Header() {
                 ))}
                 <hr className="my-4" />
                 <Link to="/login">
-                  <Button variant="ghost" className="justify-start">Login</Button>
+                  <Button variant="ghost" className="justify-start">
+                    Login
+                  </Button>
                 </Link>
                 <Link to="/signup">
                   <Button className="justify-start">Sign Up</Button>
@@ -73,5 +83,5 @@ export function Header() {
         </div>
       </div>
     </header>
-  )
+  );
 }
