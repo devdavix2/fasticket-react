@@ -38,11 +38,18 @@ export const loginUser = async (userData: { usernameOrEmail: string; password: s
 
   try {
     const response = await api.post("/auth/login", userData);
-    console.log("Login API Response:", response); // Log the full response
+    console.log("Login Response:");
+    console.log("Status:", response.status);
+    console.log("Headers:", response.headers);
+    console.log("Data:", response.data);
     return response.data;
   } catch (error: any) {
     if (axios.isAxiosError(error) && error.response) {
-      console.error("Login Error:", error.response);
+      console.error("Login Error Response:", {
+        status: error.response.status,
+        headers: error.response.headers,
+        data: error.response.data,
+      });
       throw new Error(error.response.data.message || `Error ${error.response.status}: Login failed.`);
     }
     throw new Error("Network Error. Please try again later.");
@@ -66,11 +73,18 @@ export const signupUser = async (userData: {
 
   try {
     const response = await api.post("/auth/signup", userData);
-    console.log("Signup API Response:", response); // Log the full response
+    console.log("Signup Response:");
+    console.log("Status:", response.status);
+    console.log("Headers:", response.headers);
+    console.log("Data:", response.data);
     return response.data;
   } catch (error: any) {
     if (axios.isAxiosError(error) && error.response) {
-      console.error("Signup Error:", error.response);
+      console.error("Signup Error Response:", {
+        status: error.response.status,
+        headers: error.response.headers,
+        data: error.response.data,
+      });
       throw new Error(error.response.data.message || `Error ${error.response.status}: Sign-up failed.`);
     }
     throw new Error("Network Error. Please try again later.");
