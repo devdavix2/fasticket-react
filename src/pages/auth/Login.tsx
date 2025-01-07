@@ -54,8 +54,8 @@ export function Login() {
       const response = await loginUser(formData);
       console.log("Login response:", response);
 
-      // Check response for success
-      if (response?.status === 200) {
+      // Check for success by message or status
+      if (response?.message === "Login successful") {
         setSuccess(true);
         setError(null);
       } else {
