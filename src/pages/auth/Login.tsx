@@ -57,7 +57,13 @@ export function Login() {
     try {
       const response = await loginUser(formData); // Call the API function
       console.log("Login response:", response);
-      setSuccess(true);
+
+      // Example success logic: Check response status or data
+      if (response?.status === 200) {
+        setSuccess(true);
+      } else {
+        throw new Error(response?.message || "Login failed.");
+      }
     } catch (err: any) {
       setError(err.message || "An error occurred while logging in. Please try again.");
     } finally {
@@ -82,7 +88,6 @@ export function Login() {
               onSubmit={(e) => {
                 e.preventDefault();
                 handleLogin();
-              
               }}
               method="POST"
             >
@@ -109,7 +114,7 @@ export function Login() {
               </div>
               {error && <p className="text-red-500 text-sm">{error}</p>}
               {success && <p className="text-green-500 text-sm">Login successful!</p>}
-              <Button className="w-full" type="submit">
+              <Button className="w-full" type="submit" disabled={loading}>
                 {loading ? "Logging in..." : "Log In"}
               </Button>
             </form>
