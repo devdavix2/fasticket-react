@@ -3,7 +3,7 @@ import { Input } from "../components/components/ui/input";
 import { Label } from "../components/components/ui/label";
 import { Button } from "../components/components/ui/button";
 import { useState } from "react";
-import { loginUser } from "../services/api"; // Ensure the API file path is correct
+import { loginUser } from "../services/api";
 
 interface LoginFormData {
   usernameOrEmail: string;
@@ -15,7 +15,6 @@ export function Login() {
     usernameOrEmail: "",
     password: "",
   });
-
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
@@ -23,21 +22,17 @@ export function Login() {
   // Handle input change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [id]: value }));
+    setFormData((prev) => ({ ...prev, [id]: value }));
   };
 
-  // Form validation
+  // Validate form data
   const validateFormData = (): string | null => {
     const { usernameOrEmail, password } = formData;
-    if (!usernameOrEmail.trim()) {
-      return "Email or Username is required.";
-    }
-    if (!password.trim()) {
-      return "Password is required.";
-    }
-    if (password.length < 6) {
-      return "Password must be at least 6 characters long.";
-    }
+
+    if (!usernameOrEmail.trim()) return "Email or Username is required.";
+    if (!password.trim()) return "Password is required.";
+    if (password.length < 6) return "Password must be at least 6 characters long.";
+
     return null;
   };
 
@@ -55,12 +50,12 @@ export function Login() {
     }
 
     try {
-      const response = await loginUser(formData); // Call the API function
+      const response = await loginUser(formData);
       console.log("Login response:", response);
 
-      // Example success logic: Check response status or data
       if (response?.status === 200) {
         setSuccess(true);
+        setError(null);
       } else {
         throw new Error(response?.message || "Login failed.");
       }
@@ -73,14 +68,14 @@ export function Login() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="space-y-8 w-full max-w-md px-4">
+      <div className="w-full max-w-md space-y-8 px-4">
         <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4">Login</h1>
-          <p className="text-xl text-gray-600">Welcome back! Please log in to continue.</p>
+          <h1 className="text-4xl font-bold mb-2">Login</h1>
+          <p className="text-gray-600">Welcome back! Please log in to continue.</p>
         </div>
-        <Card className="w-full">
+        <Card>
           <CardHeader>
-            <CardTitle>Login to your account</CardTitle>
+            <CardTitle>Login to Your Account</CardTitle>
           </CardHeader>
           <CardContent>
             <form
@@ -89,27 +84,26 @@ export function Login() {
                 e.preventDefault();
                 handleLogin();
               }}
-              method="POST"
             >
               <div className="space-y-2">
                 <Label htmlFor="usernameOrEmail">Email or Username</Label>
                 <Input
                   id="usernameOrEmail"
-                  aria-label="Email or Username"
                   placeholder="Your email or username"
                   value={formData.usernameOrEmail}
                   onChange={handleChange}
+                  disabled={loading}
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
                 <Input
                   id="password"
-                  aria-label="Password"
-                  placeholder="Enter your password"
                   type="password"
+                  placeholder="Enter your password"
                   value={formData.password}
                   onChange={handleChange}
+                  disabled={loading}
                 />
               </div>
               {error && <p className="text-red-500 text-sm">{error}</p>}
