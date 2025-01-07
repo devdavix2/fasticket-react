@@ -1,15 +1,7 @@
-import axios from "axios";
+import fetch from "node-fetch";
 
-// Create an Axios instance
-const api = axios.create({
-  baseURL: "https://fasticket.onrender.com", // Replace with the actual API URL
-  headers: {
-    "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": "*", // Modify for production
-    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization",
-  },
-});
+
+const BASE_URL = "https://fasticket.onrender.com"; // Replace with the actual API URL
 
 // Utility function for form validation
 const validateUserData = (userData: any, type: "login" | "signup") => {
@@ -29,6 +21,30 @@ const validateUserData = (userData: any, type: "login" | "signup") => {
   return errors.length > 0 ? errors : null;
 };
 
+// Utility function to handle fetch requests
+const handleFetch = async (url: string, options: RequestInit) => {
+  try {
+    const response = await fetch(url, options as import("node-fetch").RequestInit);
+
+    const data: { message?: string } = await response.json() as { message?: string };
+
+    console.log("Response Details:", {
+      status: response.status,
+      headers: [...response.headers],
+      data,
+    });
+
+    if (!response.ok) {
+      throw new Error(data.message || `Error ${response.status}: Request failed.`);
+    }
+
+    return data;
+  } catch (error: any) {
+    console.error("Fetch Error:", error.message);
+    throw new Error(error.message || "Network Error. Please try again later.");
+  }
+};
+
 // User login function
 export const loginUser = async (userData: { usernameOrEmail: string; password: string }) => {
   const validationErrors = validateUserData(userData, "login");
@@ -36,24 +52,15 @@ export const loginUser = async (userData: { usernameOrEmail: string; password: s
     throw new Error(validationErrors.join(" "));
   }
 
-  try {
-    const response = await api.post("/auth/login", userData);
-    console.log("Login Response:");
-    console.log("Status:", response.status);
-    console.log("Headers:", response.headers);
-    console.log("Data:", response.data);
-    return response.data;
-  } catch (error: any) {
-    if (axios.isAxiosError(error) && error.response) {
-      console.error("Login Error Response:", {
-        status: error.response.status,
-        headers: error.response.headers,
-        data: error.response.data,
-      });
-      throw new Error(error.response.data.message || `Error ${error.response.status}: Login failed.`);
-    }
-    throw new Error("Network Error. Please try again later.");
-  }
+  const options: RequestInit = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(userData),
+  };
+
+  return await handleFetch(`${BASE_URL}/auth/login`, options);
 };
 
 // User sign-up function
@@ -71,24 +78,15 @@ export const signupUser = async (userData: {
     throw new Error(validationErrors.join(" "));
   }
 
-  try {
-    const response = await api.post("/auth/signup", userData);
-    console.log("Signup Response:");
-    console.log("Status:", response.status);
-    console.log("Headers:", response.headers);
-    console.log("Data:", response.data);
-    return response.data;
-  } catch (error: any) {
-    if (axios.isAxiosError(error) && error.response) {
-      console.error("Signup Error Response:", {
-        status: error.response.status,
-        headers: error.response.headers,
-        data: error.response.data,
-      });
-      throw new Error(error.response.data.message || `Error ${error.response.status}: Sign-up failed.`);
-    }
-    throw new Error("Network Error. Please try again later.");
-  }
+  const options: RequestInit = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(userData),
+  };
+
+  return await handleFetch(`${BASE_URL}/auth/signup`, options);
 };
 
-export default api;
+export default { loginUser, signupUser };

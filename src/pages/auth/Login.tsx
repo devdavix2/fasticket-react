@@ -15,6 +15,7 @@ export function Login() {
     usernameOrEmail: "",
     password: "",
   });
+
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
@@ -53,6 +54,7 @@ export function Login() {
       const response = await loginUser(formData);
       console.log("Login response:", response);
 
+      // Check response for success
       if (response?.status === 200) {
         setSuccess(true);
         setError(null);
@@ -93,6 +95,7 @@ export function Login() {
                   value={formData.usernameOrEmail}
                   onChange={handleChange}
                   disabled={loading}
+                  aria-label="Username or Email"
                 />
               </div>
               <div className="space-y-2">
@@ -104,10 +107,17 @@ export function Login() {
                   value={formData.password}
                   onChange={handleChange}
                   disabled={loading}
+                  aria-label="Password"
                 />
               </div>
+
+              {/* Display error messages */}
               {error && <p className="text-red-500 text-sm">{error}</p>}
+
+              {/* Display success message */}
               {success && <p className="text-green-500 text-sm">Login successful!</p>}
+
+              {/* Submit button */}
               <Button className="w-full" type="submit" disabled={loading}>
                 {loading ? "Logging in..." : "Log In"}
               </Button>
