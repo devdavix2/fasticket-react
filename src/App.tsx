@@ -4,8 +4,8 @@ import { Home } from './pages/Home'
 import { Events } from './pages/Events'
 import { Hotels } from './pages/Hotels'
 import { Contact } from './pages/Contact'
-import { Signup } from './pages/Signup'
-import { Login } from './pages/Login'
+import { Signup } from './pages/auth/Signup'
+import { Login } from './pages/auth/Login'
 import { About } from './pages/About'
 
 
