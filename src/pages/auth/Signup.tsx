@@ -2,155 +2,167 @@ import { Card, CardContent, CardHeader, CardTitle } from "../components/componen
 import { Input } from "../components/components/ui/input";
 import { Label } from "../components/components/ui/label";
 import { Button } from "../components/components/ui/button";
-import { useState } from "react";
-import { signupUser } from "../services/api"; // Ensure the API file path is correct
+import { useState, useEffect } from "react";
+import { signupUser } from "../services/api";
 
-interface SignupFormData {
-  username: string;
-  email: string;
-  password: string;
-  phone: string;
-  firstName: string;
-  lastName: string;
-  company: string;
-}
-
-export function Signup() {
-  const [formData, setFormData] = useState<SignupFormData>({
+export const Signup: React.FC = () => {
+  const [formData, setFormData] = useState({
     username: "",
-    email: "",
     password: "",
+    email: "",
+    first_name: "",
+    last_name: "",
     phone: "",
-    firstName: "",
-    lastName: "",
     company: "",
   });
-
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
-  const [success, setSuccess] = useState<boolean>(false);
+  const [success, setSuccess] = useState<string | null>(null);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [id]: value }));
+  useEffect(() => {
+    let timeout: NodeJS.Timeout;
+
+    if (error || success) {
+      timeout = setTimeout(() => {
+        setError(null);
+        setSuccess(null);
+      }, 3000); // Dismiss after 3 seconds
+    }
+
+    return () => clearTimeout(timeout); // Cleanup timeout on unmount
+  }, [error, success]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
-  const handleSignUp = async () => {
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
     setLoading(true);
-    setError("");
-    setSuccess(false);
+    setError(null);
+    setSuccess(null);
 
     try {
       const response = await signupUser(formData);
-      console.log("Sign-up successful:", response);
-      setSuccess(true);
+      console.log("Registration successful:", response);
+      setSuccess("Registration Successful!");
     } catch (err: any) {
-      setError(err.message || "Sign-up failed. Please try again.");
+      setError(err.message || "Failed to register. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="space-y-8 w-full max-w-4xl px-4">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4">Sign Up</h1>
-          <p className="text-xl text-gray-600">Create an account to get started.</p>
-        </div>
-        <Card className="w-full">
-          <CardHeader>
-            <CardTitle>Create your account</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form
-              className="space-y-4"
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleSignUp();
-              }}
-            >
-              {/* Error and Success Messages */}
-              {error && <p className="text-red-500 text-center">{error}</p>}
-              {success && <p className="text-green-500 text-center">Sign-up successful!</p>}
-
-              {/* Two-Column Form Layout */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="username">Username</Label>
-                  <Input
-                    id="username"
-                    placeholder="Your username"
-                    value={formData.username}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    placeholder="you@example.com"
-                    type="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
-                  <Input
-                    id="password"
-                    placeholder="Create a password"
-                    type="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Phone</Label>
-                  <Input
-                    id="phone"
-                    placeholder="Your phone number"
-                    value={formData.phone}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="firstName">First Name</Label>
-                  <Input
-                    id="firstName"
-                    placeholder="First name"
-                    value={formData.firstName}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="lastName">Last Name</Label>
-                  <Input
-                    id="lastName"
-                    placeholder="Last name"
-                    value={formData.lastName}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className="space-y-2 col-span-2">
-                  <Label htmlFor="company">Company</Label>
-                  <Input
-                    id="company"
-                    placeholder="Your company"
-                    value={formData.company}
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
-
-              {/* Submit Button */}
-              <Button className="w-full mt-4" type="submit" disabled={loading}>
+    <div className="flex justify-center items-center h-screen relative px-4">
+      <Card className="w-full max-w-4xl">
+        <CardHeader>
+          <CardTitle>Sign Up</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSignUp} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="username">Username</Label>
+              <Input
+                id="username"
+                name="username"
+                type="text"
+                value={formData.username}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+            <div>
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+            <div>
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+            <div>
+              <Label htmlFor="first_name">First Name</Label>
+              <Input
+                id="first_name"
+                name="first_name"
+                type="text"
+                value={formData.first_name}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+            <div>
+              <Label htmlFor="last_name">Last Name</Label>
+              <Input
+                id="last_name"
+                name="last_name"
+                type="text"
+                value={formData.last_name}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+            <div>
+              <Label htmlFor="phone">Phone</Label>
+              <Input
+                id="phone"
+                name="phone"
+                type="text"
+                value={formData.phone}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+            <div className="md:col-span-2">
+              <Label htmlFor="company">Company (Optional)</Label>
+              <Input
+                id="company"
+                name="company"
+                type="text"
+                value={formData.company}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="md:col-span-2">
+              <Button type="submit" disabled={loading} className="w-full">
                 {loading ? "Signing up..." : "Sign Up"}
               </Button>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+
+      {/* Success Modal */}
+      {success && (
+        <div className="absolute top-5 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded shadow-lg transition duration-300 ease-in-out">
+          {success}
+        </div>
+      )}
+
+      {/* Error Modal */}
+      {error && (
+        <div className="absolute top-5 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-4 py-2 rounded shadow-lg transition duration-300 ease-in-out">
+          {error}
+        </div>
+      )}
     </div>
   );
-}
+};
